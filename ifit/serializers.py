@@ -79,16 +79,16 @@ class LoginUserSerializer(serializers.ModelSerializer):
             "password",
             
         )
-class SubscriptionPurchaseSerializer(serializers.ModelSerializer):
+class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = "__all__"
+        fields = ("user","plan","price","verified")
 
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubscriptionPlan
-        fields = "__all__"
+        fields = ("title","price","max_member","validity_days")
 
 
 class PlanDiscountSerializer(serializers.ModelSerializer):

@@ -9,7 +9,7 @@
 	  
 	  <section class="w-100 p-4 d-flex justify-content-center pb-4">
 
-			<transaction>You are about to fund your wallet with {{ payment.price }} and transaction reference {{ payment.paystack_payment_reference }}</p>
+			<transaction>You are about to fund your wallet with ${{ payment.price }} and transaction reference {{ payment.paystack_payment_reference }}</p>
 			
 
 			<button onclick="payWithPaystack()" class="btn btn-primary btn-block mb-4">Fund</button>
@@ -27,14 +27,14 @@
 		let currency = "NGN";
 		let plan = "";
 		let ref = "{{ payment.paystack_payment_reference }}";
-		let amount = "{{ payment.amount }}";
+		let amount = "{{ payment.price }}";
 		let obj = {
 			key: "{{ paystack_pub_key }}",
 			email: "{{ payment.user }}",
 			amount: "{{ amount_value }}",
 			ref: ref,
 			callback: function (response) {
-				window.location.href = "{% url 'verify_payment' payment.paystack_payment_reference %}";
+				window.location.href = "{% url 'ifit:verify_payment' payment.paystack_payment_reference %}";
 			},
 		};
 		if (Boolean(currency)) {

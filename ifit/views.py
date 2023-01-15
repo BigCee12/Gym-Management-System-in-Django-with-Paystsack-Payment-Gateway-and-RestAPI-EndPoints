@@ -21,6 +21,7 @@ from rest_framework.views import APIView
 from django.conf import settings
 import secrets
 from .forms import *
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 # Create your views here.
 
@@ -48,18 +49,22 @@ class SearchUsingClientTagListApiView(RetrieveAPIView):
 
 class RegisterApiView(APIView):
     serializer_class = RegisterUserSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         CustomClient.objects.create_user(**serializer.validated_data)
-        return Response({"success": "User Created"})
+        token = Token.objects.create(user=request.user)
+        return Response({"success": "User Created","token": token.key,})
 
 
 class Login(APIView):
     permission_classes = ()
-    # authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     serializer_class = LoginUserSerializer
 
     def post(self, request):
@@ -98,7 +103,7 @@ class SubscriptionPlansApiView(APIView):
 
 
 class SubscriptionPurchaseApiView(APIView):
-    serializer_class = SubscriptionPurchaseSerializer
+    serializer_class = SubscriptionSerializer
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -212,3 +217,4 @@ def activate(request, uidb64, token):
         )
     else:
         return HttpResponse("Activation link is invalid!")
+

@@ -6,4 +6,5 @@ class SubscriptionForm(forms.ModelForm):
     # level_you_teach = forms.MultipleChoiceField(widget=forms.SelectMultiple,choices=Student_level)
     class Meta:
         model = Subscription
-        fields = ("price", "user", "plan",)
+        fields = ("user", "plan","price",)
+   

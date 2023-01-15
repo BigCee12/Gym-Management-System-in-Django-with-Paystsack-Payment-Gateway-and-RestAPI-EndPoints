@@ -22,7 +22,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display = [
         "user",
         "price",
-        "reg_date",
+        "verified",
     ]
 
 

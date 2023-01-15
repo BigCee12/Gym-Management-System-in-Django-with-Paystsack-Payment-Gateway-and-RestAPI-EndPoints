@@ -40,6 +40,7 @@ class CustomClient(AbstractBaseUser, PermissionsMixin):
         self.client_tag = (
             self.first_name[:2] + self.last_name[:2] + str(random.randrange(0, 1100))
         )
+
         super().save(*args, **kwargs)
 
 
@@ -48,36 +49,36 @@ class SubscriptionPlan(models.Model):
     price = models.IntegerField(null=True)
     max_member = models.IntegerField(null=True)
     validity_days = models.IntegerField()
-    highlight_status = (models.BooleanField(default=False, null=True),)
+    
 
     def __str__(self):
         return self.title
 
 SUBSCRIPTION_PRICES = (
-    ("Basic", "Basic $250"),
-    ("Medium", "Medium $350"),
-    ("Advance", "Advance $500"), 
+    (250, "Basic $250"),
+    (350, "Medium $350"),
+    (500, "Advanced $500"), 
 )
 
 class Subscription(models.Model):
     user = models.ForeignKey(CustomClient, on_delete=models.CASCADE, null=True)
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE, null=True)
-    price = models.CharField(null=True, choices=SUBSCRIPTION_PRICES,max_length=100)
+    price = models.CharField(null=True,max_length=100)
     reg_date = models.DateField(
         default=timezone.now,
         null=True,
     )
     verified = models.BooleanField(default=False)
-    paystack_payment_reference = models.CharField(max_length=100, default="", null=True)
+    paystack_payment_reference = models.CharField(max_length=100, null=True)
 
     class Meta:
-        ordering = ("-reg_date",)
+        ordering = ("plan",)
 
     def __str__(self):
         return f"Payment: {self.price}"
 
     def get_absolute_url(self):
-        return f"verify_payment/{str(self.paystack_payment_reference)}/"
+        return reverse ('ifit:verify_payment',args[self.paystack_payment_reference])
 
     def save(self, *args, **kwargs):
         while not self.paystack_payment_reference:
