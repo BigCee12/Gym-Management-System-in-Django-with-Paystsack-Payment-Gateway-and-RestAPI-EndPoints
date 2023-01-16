@@ -129,6 +129,5 @@ class Trainer(models.Model):
 
 class PlanDiscount(models.Model):
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE, null=True)
-    period = models.IntegerField(null=True)
     duration = models.CharField(max_length=100, choices=duration)
     discount_percent = models.IntegerField()

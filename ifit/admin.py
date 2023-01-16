@@ -37,7 +37,6 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
 class PlanDiscountAdmin(admin.ModelAdmin):
     list_display = [
         "plan",
-        "period",
         "duration",
         "discount_percent",
     ]
