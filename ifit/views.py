@@ -21,8 +21,8 @@ from rest_framework.views import APIView
 from django.conf import settings
 import secrets
 from .forms import *
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-
+from rest_framework.decorators import api_view
+from .serializers import PaySerializer
 # Create your views here.
 
 User = get_user_model()
@@ -50,7 +50,7 @@ class SearchUsingClientTagListApiView(RetrieveAPIView):
 class RegisterApiView(APIView):
     serializer_class = RegisterUserSerializer
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    
 
 
     def post(self, request):
@@ -63,8 +63,6 @@ class RegisterApiView(APIView):
 
 
 class Login(APIView):
-    permission_classes = ()
-    authentication_classes = (TokenAuthentication,)
     serializer_class = LoginUserSerializer
 
     def post(self, request):

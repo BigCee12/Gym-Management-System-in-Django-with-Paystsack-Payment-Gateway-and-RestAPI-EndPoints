@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "ifit",
     "rest_framework",
     "rest_framework.authtoken",
+    "paystack",
     # "rest_framework.authtoken",
 ]
 
@@ -163,3 +164,6 @@ REST_FRAMEWORK = {
 
 PAYSTACK_SECRET_KEY = "sk_test_b849834a6e6681986022b5d5ae610290c7212c38"
 PAYSTACK_PUBLIC_KEY = "pk_test_ae394e50fe092ca9050a929eb6cf34987dae68a8"
+
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
