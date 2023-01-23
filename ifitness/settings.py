@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "ifit",
     "rest_framework",
     "rest_framework.authtoken",
-    "paystack",
     # "rest_framework.authtoken",
 ]
 
@@ -167,3 +166,11 @@ PAYSTACK_PUBLIC_KEY = "pk_test_ae394e50fe092ca9050a929eb6cf34987dae68a8"
 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'ROTATE_REFRESH_TOKENS': True,
+}

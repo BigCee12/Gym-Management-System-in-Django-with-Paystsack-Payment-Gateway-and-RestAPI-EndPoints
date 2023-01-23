@@ -21,12 +21,6 @@ urlpatterns = [
         name="activate",
     ),
     path("homepage/", views.homepage, name="homepage"),
-    path("initiate_payment/", views.initiate_payment, name="initiate_payment"),
-    path(
-        "verify_payment/<str:paystack_payment_reference>/",
-        views.verify_payment,
-        name="verify_payment",
-    ),
     path(
         "client_tag_search/<str:client_tag>",
         views.SearchUsingClientTagListApiView.as_view(),
@@ -44,4 +38,8 @@ urlpatterns = [
     path("register_subscription_plan/", views.SubscriptionPlansApiView.as_view()),
     path("token-auth/", obtain_auth_token, name="api_token_auth"),
     path("default_route/", include(router.urls)),
+    path('initiate_payment/', views.PaystackInitiatePayment.as_view(), name='initiate_payment'),
+    path("verify_payment_paystack/<str:paystack_payment_reference>/",
+    views.VerifyPaymentAPI.as_view(),name='verify_payment_paystack'),
+
 ]

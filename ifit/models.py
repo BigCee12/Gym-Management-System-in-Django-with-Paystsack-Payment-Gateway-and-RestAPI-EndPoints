@@ -54,16 +54,16 @@ class SubscriptionPlan(models.Model):
     def __str__(self):
         return self.title
 
-SUBSCRIPTION_PRICES = (
-    (250, "Basic $250"),
-    (350, "Medium $350"),
-    (500, "Advanced $500"), 
-)
+# SUBSCRIPTION_PRICES = (
+#     ("Basic", "Basic"),
+#     ("Medium", "Medium"),
+#     ("Advanced", "Advanced"), 
+# )
 
 class Subscription(models.Model):
     user = models.ForeignKey(CustomClient, on_delete=models.CASCADE, null=True)
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE, null=True)
-    price = models.CharField(null=True,max_length=100)
+    price = models.IntegerField()
     reg_date = models.DateField(
         default=timezone.now,
         null=True,
@@ -72,7 +72,7 @@ class Subscription(models.Model):
     paystack_payment_reference = models.CharField(max_length=100, null=True)
 
     class Meta:
-        ordering = ("plan",)
+        ordering = ("-plan",)
 
     def __str__(self):
         return f"Payment: {self.price}"
@@ -96,8 +96,8 @@ class Subscription(models.Model):
 
     def verify_payment(self):
         paystack = Paystack()
-        status, result = paystack.verify_payment(
-            self.paystack_payment_reference, self.price
+        status = paystack.verify_payment(
+            self.paystack_payment_reference, 
         )
         if status:
             # if result["price"] / 100 == self.price:

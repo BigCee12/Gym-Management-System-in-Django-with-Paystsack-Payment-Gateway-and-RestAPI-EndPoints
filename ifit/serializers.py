@@ -95,3 +95,20 @@ class PlanDiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlanDiscount
         fields = "__all__"
+
+
+class PaystackPaymentSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=150)
+    price = serializers.IntegerField()
+    plan = serializers.CharField(max_length=30)
+    class Meta:
+        model = Subscription
+        fields = ("email","price","plan")
+
+
+class PaystackVerifySerializer(serializers.ModelSerializer):
+    paystack_payment_reference = serializers.CharField(max_length=255)
+  
+    class Meta:
+        model = Subscription
+        fields = ("paystack_payment_reference",)

@@ -22,7 +22,6 @@ from django.conf import settings
 import secrets
 from .forms import *
 from rest_framework.decorators import api_view
-from .serializers import PaySerializer
 # Create your views here.
 
 User = get_user_model()
@@ -116,51 +115,6 @@ class PlanDiscountViewset(viewsets.ModelViewSet):
     serializer_class = PlanDiscountSerializer
 
 
-def initiate_payment(request):
-    if request.method == "POST":
-        form = SubscriptionForm(request.POST)
-        price = request.POST.get("price")
-        email = request.POST.get("email")
-        plan = request.POST.get("plan")
-        # print(price)
-
-        pk = settings.PAYSTACK_PUBLIC_KEY
-
-        payment = Subscription.objects.create(
-            price=price, plan_id=plan, user=request.user
-        )
-        payment.save()
-
-        context = {
-            "payment": payment,
-            "field_values": request.POST,
-            "paystack_pub_key": pk,
-            "amount_value": payment.amount_value(),
-        }
-        return render(
-            request,
-            "ifit/index_page.html",
-            context,
-        )
-    form = SubscriptionForm()
-    return render(request, "ifit/payment.html", {"form": form})
-
-
-def verify_payment(request, paystack_payment_reference):
-    payment = Subscription.objects.get(
-        paystack_payment_reference=paystack_payment_reference
-    )
-    verified = payment.verify_payment()
-
-    if verified:
-        # user_wallet = Subscription.objects.get(user=request.user)
-        # user_wallet.balance += payment.price
-        payment.save()
-        print(request.user.email, " funded wallet successfully")
-        return render(request, "ifit/success.html")
-    return render(request, "ifit/success.html")
-
-
 def homepage(request):
     subs = SubscriptionPlan.objects.all()
     return render(request, "ifit/index_page.html", {"subs": subs})
@@ -216,3 +170,52 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse("Activation link is invalid!")
 
+
+
+
+class PaystackInitiatePayment(APIView):
+    serializer_class = PaystackPaymentSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request):
+            data = {
+            "email" : request.data.get("email"),
+            "price" : request.data.get("price"),
+            "plan" : request.data.get("plan")
+             }
+
+            if data:
+                pk = settings.PAYSTACK_PUBLIC_KEY
+
+                payment = Subscription.objects.create(
+                    price=data.get("price"), plan_id=data.get("plan"), user=request.user
+                )
+                payment.save()
+
+                context = {
+                    "payment": str(payment),
+                    "field_values": request.data,
+                    "paystack_pub_key": pk,
+                    
+                }
+                return Response(context, status=status.HTTP_201_CREATED)
+        
+            return Response({"error": "Wrong Input"}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+
+class VerifyPaymentAPI(APIView):
+    serializer_class = PaystackVerifySerializer
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request, paystack_payment_reference):
+
+        payment = Subscription.objects.get(paystack_payment_reference=paystack_payment_reference)
+        verified = payment.verify_payment()
+
+        if verified:
+            payment.save()
+            print(request.user.email, " funded wallet successfully")
+            return Response({"status": "success"})
+        return Response({"status": "failed"})
