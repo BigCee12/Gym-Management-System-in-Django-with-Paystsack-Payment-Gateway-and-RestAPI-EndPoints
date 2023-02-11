@@ -5,7 +5,9 @@ from .manager import CustomClientManager
 from django.utils import timezone
 from .paystack import Paystack
 import secrets
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.shortcuts import reverse
 # Create your models here.
 gender = (("M", "Male"), ("F", "Female"))
 duration = (("Day(s)", "Day(s)"), ("Week", "Week"), ("Month(s)", "Month(s)"))
@@ -53,12 +55,6 @@ class SubscriptionPlan(models.Model):
 
     def __str__(self):
         return self.title
-
-# SUBSCRIPTION_PRICES = (
-#     ("Basic", "Basic"),
-#     ("Medium", "Medium"),
-#     ("Advanced", "Advanced"), 
-# )
 
 class Subscription(models.Model):
     user = models.ForeignKey(CustomClient, on_delete=models.CASCADE, null=True)
@@ -110,12 +106,17 @@ class Subscription(models.Model):
 
 class Subscriber(models.Model):
     user = models.ForeignKey(CustomClient, on_delete=models.CASCADE)
-    subscription_plan = models.ForeignKey(Subscription, on_delete=models.CASCADE)
-    plan_validity = models.IntegerField()
+    mobile_no=models.CharField(max_length=20,null=True)
+    address=models.TextField(null=True)
+    
 
     def __str__(self):
-        return self.user
+        return self.user.email
 
+@receiver(post_save,sender=CustomClient)
+def create_subscriber(sender,instance,created,**kwrags):
+	if created:
+		Subscriber.objects.create(user=instance)
 
 class Trainer(models.Model):
     fullname = models.CharField(max_length=150)

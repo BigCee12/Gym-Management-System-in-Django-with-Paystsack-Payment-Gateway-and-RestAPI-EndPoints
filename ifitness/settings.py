@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "ifit",
     "rest_framework",
     "rest_framework.authtoken",
+    'rest_framework_simplejwt',
     # "rest_framework.authtoken",
 ]
 
@@ -142,10 +143,10 @@ LOGIN_URL = "/user_login/"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 
-EMAIL_USE_TLS = True
+
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = "reginaldejikeme852@gmail.com"
-EMAIL_HOST_PASSWORD = "iuiniwnanbzqotuy"
+EMAIL_HOST_PASSWORD = "fwacgvyqojzdzbrl"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 

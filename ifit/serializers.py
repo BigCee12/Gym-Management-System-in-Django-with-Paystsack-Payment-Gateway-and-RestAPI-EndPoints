@@ -65,7 +65,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
                 
             )
             user.set_password(validated_data['password'])
-            # Token.objects.create(user=user)
             user.save()
             return user
 
@@ -82,7 +81,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = ("user","plan","price","verified")
+        fields = ("user","plan","price",)
 
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):

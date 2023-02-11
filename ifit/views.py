@@ -10,6 +10,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
+from rest_framework import generics,permissions
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -46,19 +47,19 @@ class SearchUsingClientTagListApiView(RetrieveAPIView):
     lookup_field = "client_tag"
 
 
-class RegisterApiView(APIView):
-    serializer_class = RegisterUserSerializer
-    permission_classes = (IsAuthenticated,)
+# class RegisterApiView(APIView):
+#     serializer_class = RegisterUserSerializer
+#     permission_classes = (IsAuthenticated,)
     
 
 
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
+#     def post(self, request):
+#         serializer = self.serializer_class(data=request.data)
+#         serializer.is_valid(raise_exception=True)
 
-        CustomClient.objects.create_user(**serializer.validated_data)
-        token = Token.objects.create(user=request.user)
-        return Response({"success": "User Created","token": token.key,})
+#         CustomClient.objects.create_user(**serializer.validated_data)
+#         token = Token.objects.create(user=request.user)
+#         return Response({"success": "User Created","token": token.key,})
 
 
 class Login(APIView):
@@ -96,7 +97,8 @@ class SubscriptionPlansApiView(APIView):
         serializer.is_valid(raise_exception=True)
 
         SubscriptionPlan.objects.create(**serializer.validated_data)
-        return Response({"success": "Subscription Created"})
+        
+        return Response({"success": "Subscription Plan Created"})
 
 
 class SubscriptionPurchaseApiView(APIView):
@@ -106,7 +108,8 @@ class SubscriptionPurchaseApiView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        Subscription.objects.create(**serializer.validated_data)
+        Subscription.objects.create(**serializer.validated_data),
+       
         return Response({"success": "Subscription Plan Created"})
 
 
@@ -120,15 +123,14 @@ def homepage(request):
     return render(request, "ifit/index_page.html", {"subs": subs})
 
 
-def user_register(request):
-    # you are yet to integrate the time span for payment
-    if request.method == "POST":
-        form = UserRegistrationForm(request.POST)
-        # return render(request, "ifit/user-register.html", {"form": form})
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
+class UserRegistrationView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = RegisterUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            user = CustomClient.objects.create_user(**serializer.validated_data)
             current_site = get_current_site(request)
             mail_subject = "Activation link has been sent to your email id"
             message = render_to_string(
@@ -140,37 +142,32 @@ def user_register(request):
                     "token": account_activation_token.make_token(user),
                 },
             )
-            to_email = form.cleaned_data.get("email")
+            to_email = serializer.data.get("email")
             email = EmailMessage(mail_subject, message, to=[to_email])
             email.send()
-            return HttpResponse(
+            return Response(
                 "Please confirm your email address to complete the registration"
             )
-            # login(request,user,backend='django.contrib.auth.backends.ModelBackend')
-            # messages.success(request, "You have been registered")
-            # return redirect("user_login")
-    else:
-        form = UserRegistrationForm()
-    return render(request, "ifit/user_register.html", {"form": form})
+        return Response(serializer.errors, status=400)
 
 
-def activate(request, uidb64, token):
-    User = get_user_model()
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        return HttpResponse(
-            "Thank you for your email confirmation. Now you can login your account."
-        )
-    else:
-        return HttpResponse("Activation link is invalid!")
+class UserActivationView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = CustomClient.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, CustomClient.DoesNotExist):
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return Response(
+                "Thank you for your email confirmation. Now you can login your account."
+            )
+        else:
+            return Response("Activation link is invalid!", status=400)
 
 
 class PaystackInitiatePayment(APIView):
@@ -216,6 +213,5 @@ class VerifyPaymentAPI(APIView):
 
         if verified:
             payment.save()
-            print(request.user.email, " funded wallet successfully")
             return Response({"status": "success"})
         return Response({"status": "failed"})
