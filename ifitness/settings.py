@@ -129,6 +129,10 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+
+STATICFILE_DIRS = [
+    os.path.join(BASE_DIR,'static')
+] 
 AUTH_USER_MODEL = "ifit.CustomClient"
 
 LOGIN_REDIRECT_URL = "/user_login/"
