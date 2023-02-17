@@ -25,7 +25,7 @@ SECRET_KEY = "vj(0tra_1&@y)!wj@aihi%q(0(6@9_n8xa^eacyr(#xnrj)&3y"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "ifit",
     "rest_framework",
     "rest_framework.authtoken",
-    'rest_framework_simplejwt',
+    "rest_framework_simplejwt",
     # "rest_framework.authtoken",
 ]
 
@@ -128,7 +128,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
-
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 AUTH_USER_MODEL = "ifit.CustomClient"
 
 LOGIN_REDIRECT_URL = "/user_login/"
@@ -143,7 +143,6 @@ LOGIN_URL = "/user_login/"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 
-
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = "reginaldejikeme852@gmail.com"
 EMAIL_HOST_PASSWORD = "fwacgvyqojzdzbrl"
@@ -156,7 +155,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
-        'rest_framework.authentication.BasicAuthentication',
+        "rest_framework.authentication.BasicAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
@@ -165,13 +164,13 @@ REST_FRAMEWORK = {
 PAYSTACK_SECRET_KEY = "sk_test_b849834a6e6681986022b5d5ae610290c7212c38"
 PAYSTACK_PUBLIC_KEY = "pk_test_ae394e50fe092ca9050a929eb6cf34987dae68a8"
 
-LOGIN_URL = 'login'
-LOGOUT_URL = 'logout'
+LOGIN_URL = "login"
+LOGOUT_URL = "logout"
 
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
-    'ROTATE_REFRESH_TOKENS': True,
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "ROTATE_REFRESH_TOKENS": True,
 }
