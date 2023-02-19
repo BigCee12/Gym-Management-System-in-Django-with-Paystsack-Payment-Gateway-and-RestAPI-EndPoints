@@ -1,5 +1,6 @@
 {% autoescape off %}  
-Hi {{ user.username }},  
-Please click on the link to confirm your registration,  
-http://{{ domain }}{% url 'ifit:activate' uidb64=uid token=token %}  
+Hi {{ user.firstname }},  
+Please click on the link below to activate your account,  
+<button onclick="http://{{ domain }}{% url 'ifit:activate' uidb64=uid token=token %}">Click here to activate your account </button>  
 {% endautoescape %}
+

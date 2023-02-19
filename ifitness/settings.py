@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import environ
 
+
+env = environ.Env()
+
+environ.Env.read_env()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "vj(0tra_1&@y)!wj@aihi%q(0(6@9_n8xa^eacyr(#xnrj)&3y"
+SECRET_KEY =  env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
+    # 'whitenoise',
     # "rest_framework.authtoken",
 ]
 
@@ -149,9 +155,9 @@ LOGIN_URL = "/user_login/"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "reginaldejikeme852@gmail.com"
-EMAIL_HOST_PASSWORD = "fwacgvyqojzdzbrl"
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -167,8 +173,8 @@ REST_FRAMEWORK = {
 }
 
 
-PAYSTACK_SECRET_KEY = "sk_test_b849834a6e6681986022b5d5ae610290c7212c38"
-PAYSTACK_PUBLIC_KEY = "pk_test_ae394e50fe092ca9050a929eb6cf34987dae68a8"
+PAYSTACK_SECRET_KEY = env("PAYSTACK_SECRET_KEY")
+PAYSTACK_PUBLIC_KEY =  env("PAYSTACK_PUBLIC_KEY")
 
 LOGIN_URL = "login"
 LOGOUT_URL = "logout"
