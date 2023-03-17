@@ -10,10 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
 from decouple import config
-
-
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY =  config('SECRET_KEY') 
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -58,7 +56,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    
 ]
 
 ROOT_URLCONF = "ifitness.urls"
@@ -84,11 +81,21 @@ WSGI_APPLICATION = "ifitness.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+NAME = config("NAME")
+USER = config("USER")
+PASSWORD = config("PASSWORD")
+HOST = config("HOST")
+PORT = config("PORT")
+
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": NAME,
+        "USER": USER,
+        "PASSWORD": PASSWORD,
+        "HOST": HOST,
+        "PORT": PORT,
     }
 }
 
@@ -134,11 +141,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-STATICFILE_DIRS = [
-    os.path.join(BASE_DIR,'static')
-] 
+STATICFILE_DIRS = [os.path.join(BASE_DIR, "static")]
 AUTH_USER_MODEL = "ifit.CustomClient"
 
 LOGIN_REDIRECT_URL = "/user_login/"
@@ -156,8 +161,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 EMAIL_HOST = config("EMAIL_HOST")
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_PORT = config("EMAIL_PORT")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS")
+
+# EMAIL_HOST = config("EMAIL_HOST")
+# EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
 
 
 REST_FRAMEWORK = {
@@ -172,7 +183,7 @@ REST_FRAMEWORK = {
 
 
 PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY")
-PAYSTACK_PUBLIC_KEY =  config("PAYSTACK_PUBLIC_KEY")
+PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY")
 
 LOGIN_URL = "login"
 LOGOUT_URL = "logout"

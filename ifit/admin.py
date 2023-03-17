@@ -7,7 +7,7 @@ from .models import *
 class CustomUserAdmin(admin.ModelAdmin):
     list_filter = ("email", "client_tag")
     list_display = ["first_name", "last_name", "client_tag"]
-    list_display_links = ("client_tag",)
+    list_display_links = ("client_tag","first_name")
 
 
 class TrainerAdmin(admin.ModelAdmin):

@@ -21,7 +21,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from django.conf import settings
 import secrets
-from .forms import *
+
 from rest_framework.decorators import api_view
 # Create your views here.
 
@@ -45,22 +45,6 @@ class SearchUsingClientTagListApiView(RetrieveAPIView):
     serializer_class = SearchUsingClientTagSerializer
     permission_classes = (IsAuthenticated,)
     lookup_field = "client_tag"
-
-
-# class RegisterApiView(APIView):
-#     serializer_class = RegisterUserSerializer
-#     permission_classes = (IsAuthenticated,)
-    
-
-
-#     def post(self, request):
-#         serializer = self.serializer_class(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-
-#         CustomClient.objects.create_user(**serializer.validated_data)
-#         token = Token.objects.create(user=request.user)
-#         return Response({"success": "User Created","token": token.key,})
-
 
 class Login(APIView):
     serializer_class = LoginUserSerializer
@@ -118,11 +102,6 @@ class PlanDiscountViewset(viewsets.ModelViewSet):
     serializer_class = PlanDiscountSerializer
 
 
-def homepage(request):
-    subs = SubscriptionPlan.objects.all()
-    return render(request, "ifit/index_page.html", {"subs": subs})
-
-
 class UserRegistrationView(APIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterUserSerializer
@@ -132,7 +111,7 @@ class UserRegistrationView(APIView):
         if serializer.is_valid():
             user = CustomClient.objects.create_user(**serializer.validated_data)
             current_site = get_current_site(request)
-            mail_subject = "Activation link has been sent to your email id"
+            mail_subject = "Activation link has been sent to your email, pls click on the link for verification"
             message = render_to_string(
                 "ifit/active_email.html",
                 {
@@ -142,9 +121,10 @@ class UserRegistrationView(APIView):
                     "token": account_activation_token.make_token(user),
                 },
             )
+       
             to_email = serializer.data.get("email")
-            email = EmailMessage(mail_subject, message, to=[to_email])
-            email.send()
+            email = EmailMessage(mail_subject, message, to=[to_email],)
+            email.send(fail_silently=False)
             return Response(
                 "Please confirm your email address to complete the registration"
             )

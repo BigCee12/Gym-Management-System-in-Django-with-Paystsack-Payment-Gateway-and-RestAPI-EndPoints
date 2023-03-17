@@ -18,7 +18,6 @@ urlpatterns = [
     #     views.activate,
     #     name="activate",
     # ),
-    path("homepage/", views.homepage, name="homepage"),
     path(
         "client_tag_search/<str:client_tag>",
         views.SearchUsingClientTagListApiView.as_view(),
