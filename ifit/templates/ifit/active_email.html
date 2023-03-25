@@ -1,6 +1,4 @@
-{% autoescape off %}  
+{% autoescape on %}  
 Hi {{ user.first_name }},  
-Please click on the link below to activate your account,  
-<a href="http://{{ domain }}{% url 'ifit:activate' uidb64=uid token=token %}"><button type="submit">Click here to activate your account </button></a> 
+Please click on this link to activate your account,<a href="http://{{ domain }}{% url 'ifit:activate' uidb64=uid token=token %}">Click here to activate your account</a>
 {% endautoescape %}
-

@@ -111,7 +111,7 @@ class UserRegistrationView(APIView):
         if serializer.is_valid():
             user = CustomClient.objects.create_user(**serializer.validated_data)
             current_site = get_current_site(request)
-            mail_subject = "Activation link has been sent to your email, pls click on the link for verification"
+            mail_subject = "Activation link has been sent to your email, please click on the link for verification"
             message = render_to_string(
                 "ifit/active_email.html",
                 {
